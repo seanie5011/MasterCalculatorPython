@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>f60148e8-1876-4da1-a3b6-336051b9750e</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>GOC.py</StartupFile>
+    <StartupFile>Lagrangian.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -39,6 +39,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BasicODEPI.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Lagrangian.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

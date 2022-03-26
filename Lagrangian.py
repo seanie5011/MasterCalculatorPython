@@ -260,6 +260,62 @@ def DoublePendulum1Spring():
     ax.axis('off')
     plt.show()
 
+def DoublePendulum1SpringReverseNoM1():
+    # variables
+    g, m2, l1, l2, k, t = sym.symbols('g, m_2, l_1, l_2, k, t')
+
+    #functions and free variables
+    theta1, r1, theta2  = sym.symbols(r'\theta_1, r_1, \theta_2', cls = sym.Function) # define these as functions
+
+    theta1 = theta1(t) # makes theta1 a function of time
+    r1 = r1(t)
+    theta2 = theta2(t)
+
+    theta1_d = sym.diff(theta1, t, 1) # theta1 dot (first time derivative)
+    theta1_dd = sym.diff(theta1, t, 2) # theta1 double dot (second time derivative)
+    r1_d = sym.diff(r1, t, 1)
+    r1_dd = sym.diff(r1, t, 2)
+    theta2_d = sym.diff(theta2, t, 1)
+    theta2_dd = sym.diff(theta2, t, 2)
+
+    #positions as functions of the above
+    x2, y2  = sym.symbols('x_2, y_2', cls = sym.Function) # define these as functions
+
+    x2 = x2(theta1, r1, theta2)
+    x2 = l2 * sym.sin(theta2) + (l1 + r1) * sym.sin(theta1) #user input
+
+    y2 = y2(theta1, r1, theta2)
+    y2 = -l2 * sym.cos(theta2) - (l1 + r1) * sym.cos(theta1) #user input
+
+    x2_d = sym.diff(x2, t)
+    x2_dd = sym.diff(x2, t, 2)
+    y2_d = sym.diff(y2, t)
+    y2_dd = sym.diff(y2, t, 2)
+
+    #KE
+    T = (1/2) * m2 * (x2_d**2 + y2_d**2)
+    #PE
+    U = m2 * g * y2 + (1/2) * k * (r1)**2
+    #Lagrangian
+    L = T - U
+
+    #Euler-Lagrange Equations for each
+    EL_theta1 = sym.diff(sym.diff(L, theta1_d), t) - sym.diff(L, theta1)
+    EL_r1 = sym.diff(sym.diff(L, r1_d), t) - sym.diff(L, r1)
+    EL_theta2 = sym.diff(sym.diff(L, theta2_d), t) - sym.diff(L, theta2)
+    #simplify to get eoms
+    EL_theta1 = EL_theta1.simplify()
+    EL_r1 = EL_r1.simplify()
+    EL_theta2 = EL_theta2.simplify()
+
+    EL_EOMs = [EL_theta1, EL_r1, EL_theta2]
+
+    ax = plt.subplot(111)
+    for i in range(len(EL_EOMs)):
+        ax.text(0.0, 1.0 - i*0.1, r"$%s$" %(EL_EOMs[i]), horizontalalignment = 'left', verticalalignment = 'center', fontsize = 14, color = "black")
+    ax.axis('off')
+    plt.show()
+
 def DoublePendulum2Spring():
     # variables
     g, m1, m2, l1, l2, k1, k2, t = sym.symbols('g, m_1, m_2, l_1, l_2, k_1, k_2, t')
@@ -336,4 +392,5 @@ def DoublePendulum2Spring():
 #ElasticPendulum()
 #DoublePendulum()
 #DoublePendulum1Spring()
-DoublePendulum2Spring()
+DoublePendulum1SpringReverseNoM1()
+#DoublePendulum2Spring()

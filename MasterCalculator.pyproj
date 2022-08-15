@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>MasterCalculator</Name>
     <RootNamespace>MasterCalculator</RootNamespace>
-    <InterpreterId>Global|VisualStudio|Sympy Numpy and Matplotlib</InterpreterId>
+    <InterpreterId>MSBuild|VirtualEnvForMasterCalculator|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,9 +44,23 @@
     <Compile Include="Lagrangian.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Interpolation.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CurveFitting.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="Global|VisualStudio|Sympy Numpy and Matplotlib" />
+    <Interpreter Include="VirtualEnvForMasterCalculator\">
+      <Id>VirtualEnvForMasterCalculator</Id>
+      <Version>3.9</Version>
+      <Description>VirtualEnvForMasterCalculator (Python 3.9 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

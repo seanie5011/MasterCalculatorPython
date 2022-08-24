@@ -588,6 +588,7 @@ FodyWeavers.xsd
 
 ### Extra added by me
 /CoordinateSystems.txt
-/VirtualEnvForMasterCalculator/
+test_data.csv
+test_features.py
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudio,windows

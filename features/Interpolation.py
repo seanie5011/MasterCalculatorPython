@@ -1,38 +1,45 @@
-# Dependancies
 import numpy as np
 import matplotlib.pyplot as plt
 
-class Interpolate():
+class CubicSpline():
     def __init__(self):
-        self.x = np.array([0])
-        self.y = np.array([0])
+        self.x = np.array([], dtype=np.float64)
+        self.y = np.array([], dtype=np.float64)
 
-    def set_data_frompath(self, path):
-        data = np.loadtxt(path, delimiter = ',', unpack = True)
-        self.x = data[0] # all first entries: x-values
-        self.y = data[1] # all second entries: y-values
-
-        return self.x, self.y
+        self.a = 1
+        self.b = 1
+        self.c = 1
+        self.d = 1
 
     def set_data(self, xdata, ydata):
+        '''
+        Usage:
+            Takes a numpy array containing type np.float64 and assigns to the class variables
+        Inputs:
+            xdata: array of known x-values
+            ydata: array of known y-values
+        Outputs:
+            x: array of known x-values
+            y: array of known y-values
+        '''
+
         self.x = xdata
         self.y = ydata
 
         return self.x, self.y
 
-    def cubic_spline(self):
+    def get_factors(self):
         '''
         Usage:
             Takes a set of known datapoints and uses Cubic Spline Interpolation between them
-        Inputs:
-            X: array of known x-values
-            Y: array of known y-values
+            set_data() must have already been run
         Outputs:
             a: array of coefficients
             b: array of coefficients
             c: array of coefficients
             d: array of coefficients
         '''
+
         # Copy Inputs for usage
         x = np.copy(self.x)
         y = np.copy(self.y)
@@ -57,12 +64,12 @@ class Interpolate():
         alpha = np.zeros([n])
     
         # Step 1
-        for i in range(0, n - 1): # must be careful of the n - 1
+        for i in range(0, n - 1):  # must be careful of the n - 1
             h[i] = x[i + 1] - x[i]
         
         # Step 2
         for i in range(1, n - 1):
-            alpha[i] = 3 * (a[i + 1] - a[i]) / h[i] - 3 * (a[i] - a[i-1]) / h[i-1] #subbing in
+            alpha[i] = 3 * (a[i + 1] - a[i]) / h[i] - 3 * (a[i] - a[i - 1]) / h[i - 1]  #subbing in
         
         # Step 3
         l[0] = 1
@@ -71,8 +78,8 @@ class Interpolate():
     
         # Step 4
         for i in range(1, n - 1):
-            l[i] = 2 * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1] # remember we have said l is the diagonal in L
-            mu[i] = h[i] / l[i] # remember we have said mu is the second diagonal in U
+            l[i] = 2 * (x[i + 1] - x[i - 1]) - h[i - 1] * mu[i - 1]  # remember we have said l is the diagonal in L
+            mu[i] = h[i] / l[i]  # remember we have said mu is the second diagonal in U
             z[i] = (alpha[i] - h[i - 1] * z[i - 1]) / l[i]
         
         # Step 5
@@ -81,8 +88,8 @@ class Interpolate():
         c[n - 1] = 0
     
         # Step 6
-        for j in range(n - 2, -1, -1): # from n - 2 to 0, check notation for n
-            c[j] = z[j] - mu[j] * c[j + 1] # subbing in formulae
+        for j in range(n - 2, -1, -1):  # from n - 2 to 0, check notation for n
+            c[j] = z[j] - mu[j] * c[j + 1]  # subbing in formulae
             b[j] = (a[j + 1] - a[j]) / h[j] - h[j] * (c[j + 1] + 2 * c[j]) / 3
             d[j] = (c[j + 1] - c[j]) / (3 * h[j])
         
@@ -106,48 +113,51 @@ class Interpolate():
         '''
         Usage:
             Takes the calculated formulae from the Cubic Spline Interpolation to find a y-value at a desired x-value
+            get_factors() must have already been run
         Inputs:
             x_new: float of desired x-value
-            x: array of known x-values
-            a: array of coefficients
-            b: array of coefficients
-            c: array of coefficients
-            d: array of coefficients
         Outputs:
             y_new: float of found y-value at xs
         '''
-        i = -1 # start at -1 since we want counter to start at 0
+
+        i = -1  # start at -1 since we want counter to start at 0
         for value in self.x:
-            if x_new > value: # if desired is greater than each known point, look in next range
+            if x_new > value:  # if desired is greater than each known point, look in next range
                 i += 1
             else:
                 break
 
-        y_new = self.a[i] + self.b[i] * (x_new - self.x[i]) + self.c[i] * (x_new - self.x[i])**2 + self.d[i] * (x_new - self.x[i])**3 # apply formula in correct S
+        y_new = self.a[i] + self.b[i] * (x_new - self.x[i]) + self.c[i] * (x_new - self.x[i]) ** 2 + self.d[i] * (x_new - self.x[i]) ** 3  # apply formula in correct S
 
         return y_new
 
-    def get_data(self):
-        x_list = []
-        y_list = []
+    def get_new_data(self, number_points_between=50):
+        '''
+        Usage:
+            Takes the calculated formulae from the Cubic Spline Interpolation to find points between original
+            get_factors() must have already been run
+        Inputs:
+            number_points_between: integer of how many points to calculate between original
+        Outputs:
+            new_x_array: array of found x-values
+            new_y_array: array of found y-values
+        '''
+
+        new_x_array = np.array([], dtype=np.float64)
+        new_y_array = np.array([], dtype=np.float64)
 
         for i in range(len(self.x) - 1):
-            xs = np.linspace(self.x[i], self.x[i + 1], 50)
-            ys = self.a[i] + self.b[i] * (xs - self.x[i]) + self.c[i] * (xs - self.x[i])**2 + self.d[i] * (xs - self.x[i])**3
+            xs = np.linspace(self.x[i], self.x[i + 1], number_points_between)
+            ys = self.a[i] + self.b[i] * (xs - self.x[i]) + self.c[i] * (xs - self.x[i]) ** 2 + self.d[i] * (xs - self.x[i]) ** 3
 
-            x_list.append(xs)
-            y_list.append(ys)
+            new_x_array = np.append(new_x_array, xs)
+            new_y_array = np.append(new_y_array, ys)
 
-        return x_list, y_list
+        return new_x_array, new_y_array
 
-    def plotting(self, xlabel = "x", ylabel = "y"):
-        x_list, y_list = self.get_data()
-        for index in range(len(x_list)):
-            xs = x_list[index]
-            ys = y_list[index]
-
-            plt.plot(xs, ys, color = 'k')
-            plt.plot(self.x, self.y, color = 'r', marker = '.', ls = 'None')
+    def plotting(self, new_x, new_y, xlabel = "x", ylabel = "y"):
+        plt.plot(new_x, new_y, color = 'k')
+        plt.plot(self.x, self.y, color = 'r', marker = '.', ls = 'None')
 
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)

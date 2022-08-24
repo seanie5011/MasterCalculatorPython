@@ -2,9 +2,9 @@
 
 ## This project contains numerous functions primarily for usage in an Undergraduate Physics context
 
-This project contains numerous functions that can solve complicated tasks / problems, focused on use in an Undergraduate Physics students work. (*Plans to add Frontend using [Streamlit](https://streamlit.io/), already some using [Matplotlib](https://matplotlib.org/stable/index.html)*)
+This project contains numerous functions that can solve complicated tasks / problems, focused on use in an Undergraduate Physics students work. These are showcased using a web-app created with [Streamlit](https://streamlit.io/).
 
-The functionality supported are / will be as follows:
+The functionality supported (and planned to implement) are as follows:
 
 1. [Interpolation](#interpolation)
 2. [Curve Fitting](#curve-fitting)
@@ -13,6 +13,8 @@ The functionality supported are / will be as follows:
 5. [Unit Converter](#unit-converter)
 6. [Vector Operations](#vector-operations)
 7. [Other](#other)
+
+**[User Instructions](#user-instructions)**
 
 ### Interpolation
 
@@ -45,9 +47,13 @@ More features may include: Latex Code generator, Notes functionality, an app lik
 ## User Instructions
 
 1. Clone this project
-2. Install **NumPy**, **SymPy**, **SciPy** and **Matplotlib** using *pip*  
-``pip install numpy``  
-``pip install sympy``  
-``pip install scipy``  
-``pip install matplotlib``  
-3. Run the desired scripts as listed above
+3. Create a virtual enviroment to be used, ideally in the same folder as this project
+2. Install the necessary libraries as detailed, using *pip*  
+``pip install *library*``  
+*Note: ensure protobuf is of version 3.20.x or lower; using ``pip install --upgrade protobuf==3.19.0``*
+3. Open the terminal in the directory of the desired script (CTRL + L, type ``cmd``), or cd into it
+4. Activate the Virtual Enviroment
+``*venv*\Scripts\activate``
+5. Run the script using Streamlit
+``streamlit run Home.py``  
+*Note: To close the app, CTRL + C on the terminal then close the browser*

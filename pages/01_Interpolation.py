@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import altair as alt
+import plotly.express as px
+import plotly.graph_objects as go
 
 from features.Interpolation import CubicSpline
 
@@ -55,27 +56,28 @@ def main():
     new_interpolation.get_factors()
     new_df = convert_xy_to_df(*new_interpolation.get_new_data())
 
-    points = alt.Chart(df).mark_circle(
-        size=50,
-        filled=True,
-        color='black'
-    ).encode(
+    points = px.scatter(
+        df,
         x='x',
         y='y',
-        tooltip=['x', 'y']
-    ).interactive()  # altair scatter plot of raw data
-    st.altair_chart(points)
+        color_discrete_sequence=["#000000"]
+    )
 
-    line = alt.Chart(new_df).mark_line(
-    ).encode(
+    line = px.line(
+        new_df,
         x='x',
         y='y',
-        tooltip=['x', 'y']
-    ).interactive()  # altair line plot of interpolated data
-    st.altair_chart(line)
+        color_discrete_sequence=["#FF0000"]
+    )
 
-    full_chart = line + points
-    st.altair_chart(full_chart)
+    full_chart = go.Figure(
+        data=line.data + points.data,
+    ).update_layout(
+        {
+            'title': 'Title'
+        }
+    )
+    st.plotly_chart(full_chart, use_container_width=True)
 
     # --- Sidebar
     st.sidebar.markdown("# Interpolation")
@@ -84,5 +86,7 @@ if __name__ == '__main__':
     st.set_page_config(
         page_title='Interpolation',
         page_icon=':chart_with_upwards_trend:',
+        layout='centered',
+        initial_sidebar_state='expanded'
     )
     main()

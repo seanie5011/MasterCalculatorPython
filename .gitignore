@@ -590,5 +590,7 @@ FodyWeavers.xsd
 /CoordinateSystems.txt
 test_data.csv
 test_features.py
+more_test_data.csv
+more_test_data.txt
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudio,windows

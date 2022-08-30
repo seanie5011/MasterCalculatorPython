@@ -36,7 +36,15 @@ class Interpolate():
             interpolated_data(new_x): array of found y-values
         '''
 
-        interpolated_data = interp1d(self.x, self.y, kind=kind)  # creates function from scipy
-        new_x = np.linspace(self.x[0], self.x[-1], num=number_points_between * len(self.x))
+        self.interpolated_function = interp1d(self.x, self.y, kind=kind)  # creates function from scipy
 
-        return new_x, interpolated_data(new_x)
+        new_x = np.linspace(self.x[0], self.x[-1], num=number_points_between * len(self.x))
+        interpolated_data = self.interpolated_function(new_x)
+
+        return new_x, interpolated_data
+
+    def get_yvalue(self, x):
+        try:
+            return float(self.interpolated_function(x))
+        except ValueError:  # if enters a number out of range
+            return 0.0

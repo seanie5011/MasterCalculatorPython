@@ -1,8 +1,85 @@
-# Installing Dependancies
-from matplotlib import pyplot as plt
 import numpy as np
-import scipy as sp
+from scipy.optimize import curve_fit
+
 from scipy.optimize import minimize
+
+class CurveFit():
+    def __init__(self, xdata, ydata):
+        self.x = xdata
+        self.y = ydata
+
+        # set the functions
+        self.functions = {
+            'Linear': lambda x, a, b: a * x + b,
+            'Quadratic': lambda x, a, b, c: a * x**2 + b * x + c,
+            'Cubic': lambda x, a, b, c, d: a * x**3 + b * x**2 + c * x + d,
+        }
+
+    def set_data(self, xdata, ydata):
+        '''
+        Usage:
+            Takes a numpy array containing type np.float64 and assigns to the class variables
+        Inputs:
+            xdata: array of known x-values
+            ydata: array of known y-values
+        Outputs:
+            x: array of known x-values
+            y: array of known y-values
+        '''
+
+        self.x = xdata
+        self.y = ydata
+
+        return self.x, self.y
+
+    def set_function(self, function, p0):
+        '''
+        Usage:
+            Sets the function to be used for fitting, and fits the parameters
+        Inputs:
+            function: string of the function to use to be passed into self.functions
+            p0: initial guess of the parameters to be fitted
+        Outputs:
+            popt: 
+            pcov: 
+        '''
+
+        self.func = self.functions[function]
+        self.popt, self.pcov = curve_fit(self.func, self.x, self.y, p0=p0)
+
+        return self.popt, self.pcov
+
+    def get_new_data(self, number_points_between=50):
+        '''
+        Usage:
+            Uses the specified function fitted to get the new datapoints between
+        Inputs:
+            number_points_between: integer of how many points to calculate between original
+        Outputs:
+            new_x: array of found x-values
+            new_y: array of found y-values
+        '''
+
+        new_x = np.linspace(self.x[0], self.x[-1], num=number_points_between * len(self.x))
+        new_y = self.func(new_x, *self.popt)
+
+        return new_x, new_y
+
+    def get_yvalue(self, x):
+        '''
+        Usage:
+            Uses the specified function fitted to get the y-value at the input x-value
+        Inputs:
+            x: float of the desired x-value to input
+        Outputs:
+            float of the corresponding y-value
+        '''
+
+        try:
+            return float(self.func(x, *self.popt))
+        except ValueError:  # if value error, just return 0
+            return 0.0
+
 
 class Fit():
     def __init__(self):
@@ -51,15 +128,3 @@ class Fit():
         solved_pars = res.x # x attribute are the new pars
 
         return solved_pars
-
-    def plotting(self, xstart, xend, xsteps = 100, xlabel = "x", ylabel = "y"):
-        solved_pars = self.nelder_mead() # plotting using Nelder-Mead
-        xs = np.linspace(xstart, xend, xsteps)
-        ys = self.func(xs, *solved_pars)
-
-        plt.plot(xs, ys, color = 'k')
-        plt.plot(self.x, self.y, color = 'r', marker = '.', ls = 'None')
-
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
-        plt.show()

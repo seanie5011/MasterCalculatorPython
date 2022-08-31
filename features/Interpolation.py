@@ -27,12 +27,11 @@ class Interpolate():
         '''
         Usage:
             Uses the specified kind of interpolation to get the new datapoints between
-            get_factors() must have already been run
         Inputs:
             number_points_between: integer of how many points to calculate between original
             kind: string of which kind of interpolation to use
         Outputs:
-            new_x_array: array of found x-values
+            new_x: array of found x-values
             interpolated_data(new_x): array of found y-values
         '''
 
@@ -44,6 +43,15 @@ class Interpolate():
         return new_x, interpolated_data
 
     def get_yvalue(self, x):
+        '''
+        Usage:
+            Uses the specified kind of interpolation to get the y-value at the input x-value
+        Inputs:
+            x: float of the desired x-value to input
+        Outputs:
+            float of the corresponding y-value
+        '''
+
         try:
             return float(self.interpolated_function(x))
         except ValueError:  # if enters a number out of range

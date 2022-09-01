@@ -65,7 +65,7 @@ class CurveFit():
 
         return new_x, new_y
 
-    def get_yvalue(self, x):
+    def get_yvalue(self, x: float) -> float:
         '''
         Usage:
             Uses the specified function fitted to get the y-value at the input x-value
